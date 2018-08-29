@@ -65,10 +65,8 @@ public class AddressBook {
      * at which java String.format(...) method can insert values.
      * =========================================================================
      */
-    private static final String MESSAGE_ADDED = "New person added: %1$s, " +
-      "Phone: %2$s, Email: %3$s";
-    private static final String MESSAGE_ADDRESSBOOK_CLEARED = "Address book " +
-      "has been cleared!";
+    private static final String MESSAGE_ADDED = "New person added: %1$s, Phone: %2$s, Email: %3$s";
+    private static final String MESSAGE_ADDRESSBOOK_CLEARED = "Address book has been cleared!";
     private static final String MESSAGE_COMMAND_HELP = "%1$s: %2$s";
     private static final String MESSAGE_COMMAND_HELP_PARAMETERS = "\tParameters: %1$s";
     private static final String MESSAGE_COMMAND_HELP_EXAMPLE = "\tExample: %1$s";
@@ -113,6 +111,11 @@ public class AddressBook {
     private static final String COMMAND_FIND_PARAMETERS = "KEYWORD [MORE_KEYWORDS]";
     private static final String COMMAND_FIND_EXAMPLE = COMMAND_FIND_WORD + " alice bob charlie";
 
+    private static final String COMMAND_SEARCH_NUMBER = "search";
+    private static final String COMMAND_SEARCH_NUMBER_DESC = "Search for a person via their number.";
+    private static final String COMMAND_SEARCH_NUMBER_PARAMETERS = "KEYWORD [NUMBER]";
+    private static final String COMMAND_SEARCH_NUMBER_EXAMPLE = COMMAND_SEARCH_NUMBER + " 91234567";
+
     private static final String COMMAND_LIST_WORD = "list";
     private static final String COMMAND_LIST_DESC = "Displays all persons as a list with index numbers.";
     private static final String COMMAND_LIST_EXAMPLE = COMMAND_LIST_WORD;
@@ -134,6 +137,7 @@ public class AddressBook {
     private static final String COMMAND_EXIT_WORD = "exit";
     private static final String COMMAND_EXIT_DESC = "Exits the program.";
     private static final String COMMAND_EXIT_EXAMPLE = COMMAND_EXIT_WORD;
+
 
     private static final String DIVIDER = "===================================================";
 
@@ -375,6 +379,8 @@ public class AddressBook {
             return executeAddPerson(commandArgs);
         case COMMAND_FIND_WORD:
             return executeFindPersons(commandArgs);
+        case COMMAND_SEARCH_NUMBER:
+            return executeSearchNumber(commandArgs);
         case COMMAND_LIST_WORD:
             return executeListAllPersonsInAddressBook();
         case COMMAND_DELETE_WORD:
@@ -457,6 +463,16 @@ public class AddressBook {
         showToUser(personsFound);
         return getMessageForPersonsDisplayedSummary(personsFound);
     }
+
+    private static String executeSearchNumber(String commandArgs) {
+        final String keyword = commandArgs;
+        for (String[] person : getAllPersonsInAddressBook()) {
+            if (getPhoneFromPerson(person).equals(keyword)) {
+                return getNameFromPerson(person);
+            }
+        }
+    }
+
 
     /**
      * Constructs a feedback message to summarise an operation that displayed a listing of persons.
@@ -1086,6 +1102,7 @@ public class AddressBook {
     private static String getUsageInfoForAllCommands() {
         return getUsageInfoForAddCommand() + LS
                 + getUsageInfoForFindCommand() + LS
+                + getUsageInfoForSearchNumberCommand() + LS
                 + getUsageInfoForViewCommand() + LS
                 + getUsageInfoForDeleteCommand() + LS
                 + getUsageInfoForClearCommand() + LS
@@ -1107,6 +1124,12 @@ public class AddressBook {
                 + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_FIND_EXAMPLE) + LS;
     }
 
+    /** Returns the string for showing 'search number' command usage instruction */
+    private static String getUsageInfoForSearchNumberCommand() {
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_SEARCH_NUMBER, COMMAND_SEARCH_NUMBER_DESC) + LS
+          + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_SEARCH_NUMBER_PARAMETERS) + LS
+          + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_SEARCH_NUMBER_EXAMPLE) + LS;
+    }
     /** Returns the string for showing 'delete' command usage instruction */
     private static String getUsageInfoForDeleteCommand() {
         return String.format(MESSAGE_COMMAND_HELP, COMMAND_DELETE_WORD, COMMAND_DELETE_DESC) + LS
